@@ -118,7 +118,7 @@ local idsForStaff = {
     };
 };
 
-local function GetSlotBoundAbilityId(index, bar)
+function GetSlotBoundAbilityId(index, bar)
     bar = bar or GetActiveHotbarCategory();
     local id = GetSlotBoundId(index, bar);
     local actionType = GetSlotType(index, bar);
@@ -171,7 +171,7 @@ end;
 
 GetSlotTexture = GetStyledSlotTexture;
 
-local function AssignSlotAbilityIconTexture(_, n)
+function AssignSlotStyledAbilityIconTexture(_, n)
     local btn = ZO_ActionBar_GetButton(n);
     if btn then
         local id = GetSlotBoundAbilityId(n);
@@ -182,13 +182,13 @@ end;
 
 local function SkillStyleCollectibleUpdated(_, collectibleId)
     for i = MIN_INDEX, ULT_INDEX do
-        AssignSlotAbilityIconTexture(nil, i);
+        AssignSlotStyledAbilityIconTexture(nil, i);
     end;
 end;
 
 local function OnAddOnLoaded(eventCode, addonName)
     if addonName == NAME then
-        --EVENT_MANAGER:RegisterForEvent(NAME, EVENT_ACTION_SLOT_UPDATED, AssignSlotAbilityIconTexture);
+        --EVENT_MANAGER:RegisterForEvent(NAME, EVENT_ACTION_SLOT_UPDATED, AssignSlotStyledAbilityIconTexture);
         EVENT_MANAGER:RegisterForEvent(Name, EVENT_COLLECTIBLE_UPDATED, SkillStyleCollectibleUpdated);
         EVENT_MANAGER:UnregisterForEvent(NAME, EVENT_ADD_ON_LOADED);
     end;
