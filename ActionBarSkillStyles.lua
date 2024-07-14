@@ -142,7 +142,7 @@ local function GetBaseIdForDestroSkill(id)
     return destroBaseId;
 end;
 
-local function GetSkillStyleIconForAbilityId(abilityId)
+function GetSkillStyleIconForAbilityId(abilityId)
     if destroSkills[abilityId] then
         abilityId = GetBaseIdForDestroSkill(abilityId);
     end;
@@ -153,7 +153,6 @@ local function GetSkillStyleIconForAbilityId(abilityId)
     local collectibleIcon = GetCollectibleIcon(collectibleId);
     return collectibleIcon;
 end;
-
 
 function GetStyledSlotTexture(slotId, hotbarCategory)
     if hotbarCategory then
