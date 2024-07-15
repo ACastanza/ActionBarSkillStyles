@@ -7,11 +7,6 @@ local MIN_INDEX = 3; -- first ability index
 local MAX_INDEX = 7; -- last ability index
 local ULT_INDEX = 8; -- ultimate slot index
 
--- * GetSlotTexture(*luaindex* _actionSlotIndex_, *[HotBarCategory|#HotBarCategory]:nilable* _hotbarCategory_)
--- ** _Returns:_ *string* _texture_, *string* _weapontexture_, *string* _activationAnimation_
-
-local ZO_GetSlotTexture = GetSlotTexture;
-
 local destroSkills = {
     [28858] = { type = 1; morph = 1 }; -- wall of elements
     [28807] = { type = 1; morph = 1 }; -- fire
@@ -161,15 +156,17 @@ function GetSkillStyleIconForAbilityId(abilityId)
     return collectibleIcon;
 end;
 
-local orgGetSlotTexture = GetSlotTexture;
+-- * GetSlotTexture(*luaindex* _actionSlotIndex_, *[HotBarCategory|#HotBarCategory]:nilable* _hotbarCategory_)
+-- ** _Returns:_ *string* _texture_, *string* _weapontexture_, *string* _activationAnimation_
 
+local orgGetSlotTexture = GetSlotTexture;
 ---@param slotId integer
 ---@param hotbarCategory HotBarCategory
-ZO_PreHook("GetStyledSlotTexture", function (slotId, hotbarCategory)
+SecurePostHook("GetSlotTexture", function (slotId, hotbarCategory)
     if hotbarCategory then
         local slotBoundAbilityId = GetSlotBoundAbilityId(slotId, hotbarCategory);
         local collectibleOverrideTexture = GetSkillStyleIconForAbilityId(slotBoundAbilityId);
-        local texture, weapontexture, activationAnimation = ZO_GetSlotTexture(slotId, hotbarCategory);
+        local texture, weapontexture, activationAnimation = orgGetSlotTexture(slotId, hotbarCategory);
         if collectibleOverrideTexture then
             return collectibleOverrideTexture, weapontexture, activationAnimation;
         else
@@ -180,23 +177,23 @@ ZO_PreHook("GetStyledSlotTexture", function (slotId, hotbarCategory)
     end;
 end);
 
-function AssignSlotStyledAbilityIconTexture(_, n)
-    local btn = ZO_ActionBar_GetButton(n);
+function AssignSlotStyledAbilityIconTexture(_, slotId, hotbarCategory)
+    local btn = ZO_ActionBar_GetButton(slotId);
     if btn then
-        local id = GetSlotBoundAbilityId(n);
-        local icon = GetSkillStyleIconForAbilityId(id) or GetAbilityIcon(id);
+        local abilityId = GetSlotBoundAbilityId(slotId, hotbarCategory);
+        local icon = GetSkillStyleIconForAbilityId(abilityId) or GetAbilityIcon(abilityId);
         btn.icon:SetTexture(icon);
     end;
 end;
 
 local function SkillStyleCollectibleUpdated(_, collectibleId)
-    for i = MIN_INDEX, ULT_INDEX do
-        AssignSlotStyledAbilityIconTexture(nil, i);
+    for slot = MIN_INDEX, ULT_INDEX do
+        AssignSlotStyledAbilityIconTexture(nil, slot, GetActiveHotbarCategory());
     end;
 end;
 
 local function OnAddOnLoaded(eventCode, addonName)
-    if addonName == NAME then
+    if addonName == ActionBarSkillStyles.name then
         --EVENT_MANAGER:RegisterForEvent(NAME, EVENT_ACTION_SLOT_UPDATED, AssignSlotStyledAbilityIconTexture);
         EVENT_MANAGER:RegisterForEvent(ActionBarSkillStyles.name, EVENT_COLLECTIBLE_UPDATED, SkillStyleCollectibleUpdated);
         EVENT_MANAGER:UnregisterForEvent(ActionBarSkillStyles.name, EVENT_ADD_ON_LOADED);
