@@ -1,6 +1,6 @@
 ## Title: Action Bar Skill Styles
-## Version: 0.0.1
+## Version: 0.0.2
 ## APIVersion: 101042
-## AddOnVersion: 1
+## AddOnVersion: 2
 
 ActionBarSkillStyles.lua
