@@ -1,5 +1,8 @@
-local NAME = "ActionBarSkillStyles";
-local VERSION = "0.0.1";
+ActionBarSkillStyles = {
+    name = "ActionBarSkillStyles";
+    version = "0.0.3";
+};
+
 local MIN_INDEX = 3; -- first ability index
 local MAX_INDEX = 7; -- last ability index
 local ULT_INDEX = 8; -- ultimate slot index
@@ -118,7 +121,9 @@ local idsForStaff = {
     };
 };
 
-function GetSlotBoundAbilityId(index, bar)
+---@param index integer
+---@param bar HotBarCategory
+local function GetSlotBoundAbilityId(index, bar)
     bar = bar or GetActiveHotbarCategory();
     local id = GetSlotBoundId(index, bar);
     local actionType = GetSlotType(index, bar);
@@ -128,6 +133,7 @@ function GetSlotBoundAbilityId(index, bar)
     return id;
 end;
 
+---@param id integer
 local function GetBaseIdForDestroSkill(id)
     local destroBaseId;
     local skill1 = destroSkills[id];
@@ -142,6 +148,7 @@ local function GetBaseIdForDestroSkill(id)
     return destroBaseId;
 end;
 
+---@param abilityId integer
 function GetSkillStyleIconForAbilityId(abilityId)
     if destroSkills[abilityId] then
         abilityId = GetBaseIdForDestroSkill(abilityId);
@@ -154,7 +161,11 @@ function GetSkillStyleIconForAbilityId(abilityId)
     return collectibleIcon;
 end;
 
-function GetStyledSlotTexture(slotId, hotbarCategory)
+local orgGetSlotTexture = GetSlotTexture;
+
+---@param slotId integer
+---@param hotbarCategory HotBarCategory
+ZO_PreHook("GetStyledSlotTexture", function (slotId, hotbarCategory)
     if hotbarCategory then
         local slotBoundAbilityId = GetSlotBoundAbilityId(slotId, hotbarCategory);
         local collectibleOverrideTexture = GetSkillStyleIconForAbilityId(slotBoundAbilityId);
@@ -165,11 +176,9 @@ function GetStyledSlotTexture(slotId, hotbarCategory)
             return texture, weapontexture, activationAnimation;
         end;
     else
-        return ZO_GetSlotTexture(slotId, hotbarCategory);
+        return orgGetSlotTexture(slotId, hotbarCategory);
     end;
-end;
-
-GetSlotTexture = GetStyledSlotTexture;
+end);
 
 function AssignSlotStyledAbilityIconTexture(_, n)
     local btn = ZO_ActionBar_GetButton(n);
@@ -189,9 +198,9 @@ end;
 local function OnAddOnLoaded(eventCode, addonName)
     if addonName == NAME then
         --EVENT_MANAGER:RegisterForEvent(NAME, EVENT_ACTION_SLOT_UPDATED, AssignSlotStyledAbilityIconTexture);
-        EVENT_MANAGER:RegisterForEvent(Name, EVENT_COLLECTIBLE_UPDATED, SkillStyleCollectibleUpdated);
-        EVENT_MANAGER:UnregisterForEvent(NAME, EVENT_ADD_ON_LOADED);
+        EVENT_MANAGER:RegisterForEvent(ActionBarSkillStyles.name, EVENT_COLLECTIBLE_UPDATED, SkillStyleCollectibleUpdated);
+        EVENT_MANAGER:UnregisterForEvent(ActionBarSkillStyles.name, EVENT_ADD_ON_LOADED);
     end;
 end;
 
-EVENT_MANAGER:RegisterForEvent(NAME, EVENT_ADD_ON_LOADED, OnAddOnLoaded);
+EVENT_MANAGER:RegisterForEvent(ActionBarSkillStyles.name, EVENT_ADD_ON_LOADED, OnAddOnLoaded);
