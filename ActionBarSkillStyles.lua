@@ -1,13 +1,15 @@
-ActionBarSkillStyles = {
+ActionBarSkillStyles =
+{
     name = "ActionBarSkillStyles";
-    version = "0.0.3";
+    version = "0.0.4";
 };
 
 local MIN_INDEX = 3; -- first ability index
 local MAX_INDEX = 7; -- last ability index
 local ULT_INDEX = 8; -- ultimate slot index
 
-local destroSkills = {
+local destroSkills =
+{
     [28858] = { type = 1; morph = 1 }; -- wall of elements
     [28807] = { type = 1; morph = 1 }; -- fire
     [28849] = { type = 1; morph = 1 }; -- ice
@@ -69,51 +71,93 @@ local destroSkills = {
     [85130] = { type = 4; morph = 3 }; -- shock
 };
 
-local idsForStaff = {
-    [1] = {     -- wall morphs
-        [1] = { -- wall of elements
+local idsForStaff =
+{
+    [1] =
+    {     -- wall morphs
+        [1] =
+        { -- wall of elements
             [WEAPONTYPE_NONE] = 28858;
         };
-        [2] = { -- elemental blockade
+        [2] =
+        { -- elemental blockade
             [WEAPONTYPE_NONE] = 39011;
         };
-        [3] = { -- unstable wall of elements
+        [3] =
+        { -- unstable wall of elements
             [WEAPONTYPE_NONE] = 39052;
         };
     };
-    [2] = { -- touch / reach / clench
-        [1] = {
+    [2] =
+    { -- touch / reach / clench
+        [1] =
+        {
             [WEAPONTYPE_NONE] = 29091;
         };
-        [2] = {
+        [2] =
+        {
             [WEAPONTYPE_NONE] = 38937;
         };
-        [3] = {
+        [3] =
+        {
             [WEAPONTYPE_NONE] = 38984;
         };
     };
-    [3] = { -- impulse / ring / pulsar
-        [1] = {
+    [3] =
+    { -- impulse / ring / pulsar
+        [1] =
+        {
             [WEAPONTYPE_NONE] = 28800;
         };
-        [2] = {
+        [2] =
+        {
             [WEAPONTYPE_NONE] = 39143;
         };
-        [3] = {
+        [3] =
+        {
             [WEAPONTYPE_NONE] = 39161;
         };
     };
-    [4] = { -- storm / eye / rage
-        [1] = {
+    [4] =
+    { -- storm / eye / rage
+        [1] =
+        {
             [WEAPONTYPE_NONE] = 83619;
         };
-        [2] = {
+        [2] =
+        {
             [WEAPONTYPE_NONE] = 83642;
         };
-        [3] = {
+        [3] =
+        {
             [WEAPONTYPE_NONE] = 84434;
         };
     };
+};
+
+local styleFix =
+{
+    -- Arcanist, Stam Cost Abilities
+    [193331] = 185805; -- Fatecarver
+    [193398] = 186366; -- Pragmatic Fatecarver
+    [193397] = 183122; -- Exhausting Fatecarver
+    [198282] = 183261; -- Runemend
+    [198288] = 186189; -- Evolving Runemend
+    [198292] = 186191; -- Audacious Runemend
+    [188658] = 185794; -- Runeblades
+    [188780] = 182977; -- Escalating Runeblades
+    [188787] = 185803; -- Writhing Runeblades
+
+    -- Arcanist, Mag Cost Abilities
+    [185805] = 185805; -- Fatecarver
+    [186366] = 186366; -- Pragmatic Fatecarver
+    [183122] = 183122; -- Exhausting Fatecarver
+    [183261] = 183261; -- Runemend
+    [186189] = 186189; -- Rvolving Runemend
+    [186191] = 186191; -- audacious runemend
+    [185794] = 185794; -- Runeblades
+    [182977] = 182977; -- Escalating Runeblades
+    [185803] = 185803; -- Writhing Runeblades
 };
 
 ---@param index integer
@@ -147,6 +191,8 @@ end;
 function GetSkillStyleIconForAbilityId(abilityId)
     if destroSkills[abilityId] then
         abilityId = GetBaseIdForDestroSkill(abilityId);
+    elseif styleFix[abilityId] then
+        abilityId = styleFix[abilityId];
     end;
     local skillType, skillLineIndex, skillIndex = GetSpecificSkillAbilityKeysByAbilityId(abilityId);
     local progressionId = GetProgressionSkillProgressionId(skillType, skillLineIndex, skillIndex);
